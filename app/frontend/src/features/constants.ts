@@ -123,6 +123,7 @@ export const FIND_HOST = "Find host";
 export const HANGOUTS_LABEL = "Hangouts";
 export const INVALID_COMMUNITY_ID = "Invalid community id.";
 export const LOCAL_POINTS_LABEL = "Local points";
+export const LOCATION = "Location";
 export const MORE_REPLIES = "More replies...";
 export const MORE_TIPS = "More tips and information";
 export const NEW_POST_LABEL = "New post";
@@ -162,3 +163,4 @@ export const JAIL_TOS_TEXT =
 
 // Datepicker
 export const CHANGE_DATE = "Change date";
+export const CHANGE_TIME = "Change time";
