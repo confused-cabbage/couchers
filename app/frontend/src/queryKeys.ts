@@ -80,8 +80,9 @@ export const communityNearbyUsersKey = (communityId: number) => [
   communityId,
 ];
 
+export const communityEventsBaseKey = "communityEvents";
 export const communityEventsKey = (communityId: number) => [
-  "communityEvents",
+  communityEventsBaseKey,
   communityId,
 ];
 
