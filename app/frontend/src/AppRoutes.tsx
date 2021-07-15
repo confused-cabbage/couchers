@@ -1,7 +1,7 @@
 import PageTitle from "components/PageTitle";
 import TextBody from "components/TextBody";
 import EditCommunityInfoPage from "features/communities/EditCommunityInfoPage";
-import { CreateEventPage } from "features/communities/events";
+import CreateEventPage from "features/communities/events/CreateEventPage";
 import EventPage from "features/communities/events/EventPage";
 import EditProfilePage from "features/profile/edit/EditProfilePage";
 import UserPage from "features/profile/view/UserPage";
@@ -185,9 +185,12 @@ export default function AppRoutes() {
       </AppRoute>
 
       {process.env.REACT_APP_IS_COMMUNITIES_PART2_ENABLED && (
-        <>
+        <Switch>
           <AppRoute isPrivate path={newEventRoute}>
             <CreateEventPage />
+          </AppRoute>
+          <AppRoute isPrivate path={eventRoute}>
+            <EventPage />
           </AppRoute>
           <AppRoute isPrivate path={newPlaceRoute}>
             <NewPlacePage />
@@ -204,10 +207,7 @@ export default function AppRoutes() {
           <AppRoute isPrivate path={groupRoute}>
             <GroupPage />
           </AppRoute>
-          <AppRoute isPrivate path={eventRoute}>
-            <EventPage />
-          </AppRoute>
-        </>
+        </Switch>
       )}
 
       {
