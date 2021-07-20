@@ -31,14 +31,12 @@ variables:
   FRONTEND_NEXT_TAG: $CI_REGISTRY_IMAGE/frontend-next:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   PROMETHEUS_TAG: $CI_REGISTRY_IMAGE/prometheus:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
 
-
 default:
   image: docker
   services:
     - docker:19.03.12-dind
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
 
 protos:
   needs: []
@@ -51,11 +49,10 @@ protos:
     - cd app && ./generate_protos.sh
   rules:
     - changes:
-      - app/**/*
+        - app/**/*
   artifacts:
     paths:
       - app/
-
 
 build:proxy:
   needs: ["protos"]
@@ -67,11 +64,11 @@ build:proxy:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
     - if: $CI_COMMIT_BRANCH != $RELEASE_BRANCH
       changes:
-      - app/proto/**/*
-      - app/proxy/**/*
+        - app/proto/**/*
+        - app/proxy/**/*
 
 build:nginx:
   needs: []
@@ -83,7 +80,7 @@ build:nginx:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 build:prometheus:
   needs: []
@@ -95,7 +92,7 @@ build:prometheus:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 build:backend:
   needs: ["protos"]
@@ -107,11 +104,11 @@ build:backend:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
     - if: $CI_COMMIT_BRANCH != $RELEASE_BRANCH
       changes:
-      - app/proto/**/*
-      - app/backend/**/*
+        - app/proto/**/*
+        - app/backend/**/*
 
 build:media:
   needs: ["protos"]
@@ -123,11 +120,11 @@ build:media:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
     - if: $CI_COMMIT_BRANCH != $RELEASE_BRANCH
       changes:
-      - app/proto/**/*
-      - app/media/**/*
+        - app/proto/**/*
+        - app/media/**/*
 
 build:frontend:
   needs: ["protos"]
@@ -141,7 +138,7 @@ build:frontend:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
   artifacts:
     paths:
       - artifacts/frontend/
@@ -156,11 +153,11 @@ build:nginx-next:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
     - if: $CI_COMMIT_BRANCH != $RELEASE_BRANCH
       changes:
-      - app/proto/**/*
-      - app/nginx/**/*
+        - app/proto/**/*
+        - app/nginx/**/*
 
 build:frontend-next:
   needs: ["protos"]
@@ -176,15 +173,14 @@ build:frontend-next:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
     - if: $CI_COMMIT_BRANCH != $RELEASE_BRANCH
       changes:
-      - app/proto/**/*
-      - app/frontend/**/*
+        - app/proto/**/*
+        - app/frontend/**/*
   artifacts:
     paths:
       - artifacts/frontend-next/
-
 
 test:backend:
   needs: ["build:backend"]
@@ -223,11 +219,11 @@ test:backend:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/backend/**/*
+        - app/proto/**/*
+        - app/backend/**/*
 
 test:media:
   needs: ["build:media"]
@@ -248,11 +244,11 @@ test:media:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/media/**/*
+        - app/proto/**/*
+        - app/media/**/*
 
 # test:frontend:
 #   needs: ["build:frontend"]
@@ -295,41 +291,40 @@ test:storybook:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/frontend/**/*
+        - app/proto/**/*
+        - app/frontend/**/*
 
-# test:frontend-next:
-#   needs: ["build:frontend-next"]
-#   stage: test
-#   image: $FRONTEND_NEXT_TAG
-#   inherit:
-#     # no docker login
-#     default: false
-#   script:
-#     - cd /app && yarn test-ci
-#   after_script:
-#     - cp /app/junit.xml $CI_PROJECT_DIR/
-#     - cp /app/coverage/cobertura-coverage.xml $CI_PROJECT_DIR/
-#     - mkdir -p $CI_PROJECT_DIR/artifacts/lcov-report && cp -a /app/coverage/lcov-report $CI_PROJECT_DIR/artifacts/
-#   coverage: '/^All files[^|]*\|[^|]*\s+([\d\.]+)/'
-#   artifacts:
-#     reports:
-#       cobertura: cobertura-coverage.xml
-#       junit: junit.xml
-#     paths:
-#       - artifacts/lcov-report
-#   rules:
-#     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
-#       changes:
-#       - app/**/*
-#     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
-#       changes:
-#       - app/proto/**/*
-#       - app/frontend/**/*
-
+test:frontend-next:
+  needs: ["build:frontend-next"]
+  stage: test
+  image: $FRONTEND_NEXT_TAG
+  inherit:
+    # no docker login
+    default: false
+  script:
+    - cd /app && yarn test-ci
+  after_script:
+    - cp /app/junit.xml $CI_PROJECT_DIR/
+    - cp /app/coverage/cobertura-coverage.xml $CI_PROJECT_DIR/
+    - mkdir -p $CI_PROJECT_DIR/artifacts/lcov-report && cp -a /app/coverage/lcov-report $CI_PROJECT_DIR/artifacts/
+  coverage: '/^All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      cobertura: cobertura-coverage.xml
+      junit: junit.xml
+    paths:
+      - artifacts/lcov-report
+  rules:
+    - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
+      changes:
+        - app/**/*
+    - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
+      changes:
+        - app/proto/**/*
+        - app/frontend/**/*
 
 preview:bcov:
   needs: ["test:backend"]
@@ -347,11 +342,11 @@ preview:bcov:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/backend/**/*
+        - app/proto/**/*
+        - app/backend/**/*
 
 # preview:fcov:
 #   needs: ["test:frontend-next"]
@@ -391,11 +386,11 @@ preview:storybook:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/frontend/**/*
+        - app/proto/**/*
+        - app/frontend/**/*
 
 preview:frontend-next:
   needs: ["build:frontend-next"]
@@ -413,12 +408,11 @@ preview:frontend-next:
   rules:
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH == $RELEASE_BRANCH)
       changes:
-      - app/**/*
+        - app/**/*
     - if: ($DO_CHECKS == "true") && ($CI_COMMIT_BRANCH != $RELEASE_BRANCH)
       changes:
-      - app/proto/**/*
-      - app/frontend/**/*
-
+        - app/proto/**/*
+        - app/frontend/**/*
 
 release:proxy:
   stage: release
@@ -429,7 +423,7 @@ release:proxy:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:nginx:
   stage: release
@@ -440,7 +434,7 @@ release:nginx:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:prometheus:
   stage: release
@@ -451,7 +445,7 @@ release:prometheus:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:backend:
   stage: release
@@ -462,7 +456,7 @@ release:backend:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:media:
   stage: release
@@ -473,7 +467,7 @@ release:media:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:frontend:
   stage: release
@@ -484,7 +478,7 @@ release:frontend:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:nginx-next:
   stage: release
@@ -495,7 +489,7 @@ release:nginx-next:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
 
 release:frontend-next:
   stage: release
@@ -506,4 +500,4 @@ release:frontend-next:
   rules:
     - if: $CI_COMMIT_BRANCH == $RELEASE_BRANCH
       changes:
-      - app/**/*
+        - app/**/*
